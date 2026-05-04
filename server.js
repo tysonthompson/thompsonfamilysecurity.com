@@ -663,6 +663,10 @@ function createBookingRecord(payload, stripeResult, stripeCustomer) {
     stripeCustomerId:
       stripeCustomer?.id ||
       (typeof stripeResult.customer === "string" ? stripeResult.customer : stripeResult.customer?.id || ""),
+    confirmationEmailSentAt: "",
+    confirmationEmailProvider: "",
+    confirmationEmailId: "",
+    confirmationEmailError: "",
     notes: "",
   };
 }
@@ -834,6 +838,254 @@ function updateBookingFromCheckoutSession(session, overrides = {}) {
   );
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatMoney(amount) {
+  return new Intl.NumberFormat("en-CA", {
+    style: "currency",
+    currency: CURRENCY.toUpperCase(),
+    maximumFractionDigits: 0,
+  }).format(Number(amount || 0));
+}
+
+function formatAppointmentDate(dateValue) {
+  if (!dateValue) {
+    return "the selected date";
+  }
+
+  const date = new Date(`${dateValue}T12:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return dateValue;
+  }
+
+  return new Intl.DateTimeFormat("en-CA", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+function getBookingAddressLine(booking) {
+  return [booking.address, booking.unitNumber].filter(Boolean).join(", ");
+}
+
+function buildBookingConfirmationEmail(booking) {
+  const customerName = booking.fullName || "there";
+  const appointmentDate = formatAppointmentDate(booking.appointmentDate);
+  const appointmentTime = booking.appointmentTime || "the selected time";
+  const addressLine = getBookingAddressLine(booking);
+  const quotedTotal = formatMoney(booking.quotedTotal);
+  const depositAmount = formatMoney(booking.depositAmount);
+  const balanceDue = formatMoney(booking.balanceDue);
+  const cameraCounts = `${booking.indoorCount || 0} indoor, ${booking.outdoorCount || 0} outdoor, ${booking.doorbellCount || 0} doorbell`;
+  const subject = "Your Thompson Family Security appointment is confirmed";
+  const text = [
+    `Hi ${customerName},`,
+    "",
+    "Your Thompson Family Security appointment request is confirmed.",
+    "",
+    `Appointment: ${appointmentDate} at ${appointmentTime}`,
+    `Service address: ${addressLine}`,
+    `Camera setup: ${cameraCounts}`,
+    `Estimated total: ${quotedTotal}`,
+    `Deposit received: ${depositAmount}`,
+    `Balance due after installation: ${balanceDue}`,
+    "",
+    "We will review your booking details and follow up if anything needs clarification before your installation.",
+    "",
+    "Thank you,",
+    "Thompson Family Security",
+  ].join("\n");
+  const html = `
+    <div style="font-family: Arial, sans-serif; color: #102033; line-height: 1.55; max-width: 620px;">
+      <p>Hi ${escapeHtml(customerName)},</p>
+      <p>Your Thompson Family Security appointment request is confirmed.</p>
+      <div style="background: #f7f3ed; border: 1px solid #e5ded3; border-radius: 12px; padding: 18px; margin: 22px 0;">
+        <p style="margin: 0 0 10px;"><strong>Appointment:</strong> ${escapeHtml(appointmentDate)} at ${escapeHtml(appointmentTime)}</p>
+        <p style="margin: 0 0 10px;"><strong>Service address:</strong> ${escapeHtml(addressLine)}</p>
+        <p style="margin: 0 0 10px;"><strong>Camera setup:</strong> ${escapeHtml(cameraCounts)}</p>
+        <p style="margin: 0 0 10px;"><strong>Estimated total:</strong> ${escapeHtml(quotedTotal)}</p>
+        <p style="margin: 0 0 10px;"><strong>Deposit received:</strong> ${escapeHtml(depositAmount)}</p>
+        <p style="margin: 0;"><strong>Balance due after installation:</strong> ${escapeHtml(balanceDue)}</p>
+      </div>
+      <p>We will review your booking details and follow up if anything needs clarification before your installation.</p>
+      <p>Thank you,<br />Thompson Family Security</p>
+    </div>
+  `;
+
+  return { subject, text, html };
+}
+
+async function sendResendEmail({ to, subject, html, text, replyTo }) {
+  const apiKey = process.env.RESEND_API_KEY || "";
+  const from = process.env.EMAIL_FROM || "";
+
+  if (!apiKey || !from) {
+    throw new Error("Missing RESEND_API_KEY or EMAIL_FROM.");
+  }
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to,
+      subject,
+      html,
+      text,
+      ...(replyTo ? { reply_to: replyTo } : {}),
+    }),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || result.error || "Unable to send email.");
+  }
+
+  return result;
+}
+
+async function sendBookingConfirmationEmailIfNeeded(booking) {
+  if (!booking || booking.paymentStatus !== "deposit_paid" || booking.confirmationEmailSentAt) {
+    return booking;
+  }
+
+  const customerEmail = String(booking.customerEmail || "").trim();
+
+  if (!customerEmail) {
+    return updateBookingByReferences(
+      { sessionId: booking.checkoutSessionId, quoteId: booking.quoteId },
+      () => ({ confirmationEmailError: "Missing customer email." })
+    );
+  }
+
+  try {
+    const email = buildBookingConfirmationEmail(booking);
+    const result = await sendResendEmail({
+      to: customerEmail,
+      ...email,
+      replyTo: process.env.EMAIL_REPLY_TO || process.env.BUSINESS_EMAIL || "",
+    });
+
+    if (process.env.BUSINESS_EMAIL) {
+      await sendResendEmail({
+        to: process.env.BUSINESS_EMAIL,
+        subject: `New paid booking: ${booking.fullName || customerEmail}`,
+        html: email.html,
+        text: email.text,
+        replyTo: customerEmail,
+      });
+    }
+
+    return updateBookingByReferences(
+      { sessionId: booking.checkoutSessionId, quoteId: booking.quoteId },
+      () => ({
+        confirmationEmailSentAt: new Date().toISOString(),
+        confirmationEmailProvider: "resend",
+        confirmationEmailId: result.id || "",
+        confirmationEmailError: "",
+      })
+    );
+  } catch (error) {
+    console.error("Booking confirmation email failed:", error.message);
+    return updateBookingByReferences(
+      { sessionId: booking.checkoutSessionId, quoteId: booking.quoteId },
+      () => ({ confirmationEmailError: error.message || "Email failed." })
+    );
+  }
+}
+
+function verifyStripeWebhookSignature(rawBody, signatureHeader) {
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
+
+  if (!endpointSecret) {
+    throw new Error("Missing STRIPE_WEBHOOK_SECRET.");
+  }
+
+  if (!signatureHeader) {
+    throw new Error("Missing Stripe signature header.");
+  }
+
+  const parts = signatureHeader.split(",").reduce((accumulator, item) => {
+    const [key, value] = item.split("=");
+    accumulator[key] = value;
+    return accumulator;
+  }, {});
+  const timestamp = parts.t;
+  const expectedSignature = parts.v1;
+
+  if (!timestamp || !expectedSignature) {
+    throw new Error("Invalid Stripe signature header.");
+  }
+
+  const timestampAgeSeconds = Math.abs(Date.now() / 1000 - Number(timestamp));
+
+  if (!Number.isFinite(timestampAgeSeconds) || timestampAgeSeconds > 300) {
+    throw new Error("Stripe webhook signature is too old.");
+  }
+
+  const signedPayload = `${timestamp}.${rawBody.toString("utf8")}`;
+  const computedSignature = crypto
+    .createHmac("sha256", endpointSecret)
+    .update(signedPayload)
+    .digest("hex");
+  const expectedBuffer = Buffer.from(expectedSignature, "hex");
+  const computedBuffer = Buffer.from(computedSignature, "hex");
+
+  if (
+    expectedBuffer.length !== computedBuffer.length ||
+    !crypto.timingSafeEqual(expectedBuffer, computedBuffer)
+  ) {
+    throw new Error("Invalid Stripe webhook signature.");
+  }
+}
+
+async function handleStripeWebhook(request, response) {
+  let rawBody;
+
+  try {
+    rawBody = await readRawRequestBody(request);
+    verifyStripeWebhookSignature(rawBody, request.headers["stripe-signature"]);
+  } catch (error) {
+    sendJson(response, 400, { error: error.message });
+    return;
+  }
+
+  let event;
+
+  try {
+    event = JSON.parse(rawBody.toString("utf8"));
+  } catch (error) {
+    sendJson(response, 400, { error: "Invalid Stripe webhook payload." });
+    return;
+  }
+
+  try {
+    if (event.type === "checkout.session.completed") {
+      const updatedBooking = updateBookingFromCheckoutSession(event.data.object);
+      await sendBookingConfirmationEmailIfNeeded(updatedBooking);
+    }
+
+    sendJson(response, 200, { received: true });
+  } catch (error) {
+    console.error("Stripe webhook handling failed:", error.message);
+    sendJson(response, 500, { error: "Webhook handling failed." });
+  }
+}
+
 async function createCheckoutSession(request, response) {
   if (!process.env.STRIPE_SECRET_KEY) {
     sendJson(response, 500, {
@@ -993,7 +1245,9 @@ async function confirmBooking(request, response) {
       return;
     }
 
-    sendJson(response, 200, { booking: updatedBooking });
+    const bookingWithEmailStatus = await sendBookingConfirmationEmailIfNeeded(updatedBooking);
+
+    sendJson(response, 200, { booking: bookingWithEmailStatus || updatedBooking });
   } catch (error) {
     sendJson(response, 502, { error: error.message || "Unable to confirm booking." });
   }
@@ -1084,6 +1338,11 @@ const server = http.createServer((request, response) => {
 
   if (request.method === "POST" && requestUrl.pathname === "/create-checkout-session") {
     createCheckoutSession(request, response);
+    return;
+  }
+
+  if (request.method === "POST" && requestUrl.pathname === "/webhook") {
+    handleStripeWebhook(request, response);
     return;
   }
 

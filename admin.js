@@ -198,6 +198,7 @@ function renderBookingDetail(booking) {
       <li><span>Difficult mounting: ${booking.difficultMounting ? "Yes" : "No"}</span></li>
       <li><span>Checkout session: ${booking.checkoutSessionId || "Not created"}</span></li>
       <li><span>Customer email: ${booking.customerEmail || "Not available yet"}</span></li>
+      <li><span>Confirmation email: ${booking.confirmationEmailSentAt ? `Sent ${formatDisplayDate(booking.confirmationEmailSentAt.slice(0, 10))}` : booking.confirmationEmailError || "Not sent yet"}</span></li>
     </ul>
   `;
 }

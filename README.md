@@ -43,6 +43,7 @@ Then set these environment variables before starting the Node server:
 - `ADMIN_PASSWORD`
 - `ADMIN_SESSION_SECRET`
 - `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
 - `APP_BASE_URL`
 - `CURRENCY`
 - `STRIPE_PRICE_BOOKING_DEPOSIT`
@@ -51,8 +52,46 @@ Then set these environment variables before starting the Node server:
 - `STRIPE_PRICE_DOORBELL_UPGRADE`
 - `STRIPE_PRICE_FLOODLIGHT_UPGRADE`
 - `STRIPE_PRICE_SMART_DISPLAY`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
+- `EMAIL_REPLY_TO`
+- `BUSINESS_EMAIL`
 
 The server now auto-loads `.env` from the project root on startup.
+
+## Booking confirmation emails
+
+Custom booking confirmation emails are sent with Resend after Stripe confirms the $50 deposit.
+
+Set these values in `.env`:
+
+```dotenv
+RESEND_API_KEY=re_your_resend_api_key
+EMAIL_FROM=Thompson Family Security <bookings@yourdomain.com>
+EMAIL_REPLY_TO=bookings@yourdomain.com
+BUSINESS_EMAIL=you@yourdomain.com
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_signing_secret
+```
+
+Webhook setup:
+
+```powershell
+stripe listen --forward-to localhost:3000/webhook
+```
+
+Copy the printed `whsec_...` value into `STRIPE_WEBHOOK_SECRET`, then restart `node server.js`.
+
+For production, add a Stripe webhook endpoint that points to:
+
+```text
+https://yourdomain.com/webhook
+```
+
+Listen for:
+
+- `checkout.session.completed`
+
+Stripe receipts can still be enabled separately in the Stripe Dashboard under customer email settings.
 
 ## Admin security
 
@@ -114,6 +153,7 @@ Set these environment variables in Render before deploying:
 - `APP_BASE_URL`
 - `CURRENCY`
 - `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
 - `STRIPE_PRICE_BOOKING_DEPOSIT`
 - `STRIPE_PRICE_SAME_WEEK_INSTALL`
 - `STRIPE_PRICE_EXTENDED_SUPPORT`
@@ -121,6 +161,10 @@ Set these environment variables in Render before deploying:
 - `STRIPE_PRICE_FLOODLIGHT_UPGRADE`
 - `STRIPE_PRICE_SMART_DISPLAY`
 - `GOOGLE_MAPS_API_KEY`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
+- `EMAIL_REPLY_TO`
+- `BUSINESS_EMAIL`
 
 Recommended `APP_BASE_URL` format:
 
