@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Your Appointment | Thompson Family Security</title>
+    <meta
+      name="description"
+      content="Choose your appointment date and time for Thompson Family Security camera installation."
+    />
+    <meta name="theme-color" content="#102033" />
+    <meta name="google-maps-api-key" content="" />
+    <script>
+      document.documentElement.classList.add("booking-preload");
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero hero-compact">
+        <nav class="topbar">
+          <div class="brand-lockup">
+            <img class="brand-mark" src="/logo.png" alt="Thompson Family Security logo" />
+          </div>
+          <a class="button button-secondary desktop-cta" href="/">Back To Quote</a>
+        </nav>
+      </header>
+
+      <main class="builder-section booking-page">
+        <div class="section-heading">
+          <p class="section-kicker">Step 2 of 2</p>
+          <h2>Choose your appointment and reserve it with a $50 deposit.</h2>
+        </div>
+
+        <div class="builder-grid">
+          <form class="builder-card" id="booking-form" autocomplete="off">
+            <div class="builder-header">
+              <div>
+                <p class="eyebrow">Booking details</p>
+                <h3>Tell us where and when</h3>
+              </div>
+              <p class="helper-text" id="booking-package-label">Selected package: Custom Quote</p>
+            </div>
+
+            <div class="field-grid contact-grid">
+              <label class="field field-full">
+                <span>Full name</span>
+                <input
+                  id="full-name"
+                  name="fullName"
+                  type="text"
+                  placeholder="Your full name"
+                  autocomplete="name"
+                  required
+                />
+              </label>
+              <label class="field field-full">
+                <span>Street address</span>
+                <input
+                  id="address"
+                  name="serviceAddressSearch"
+                  type="text"
+                  list="mississauga-address-suggestions"
+                  placeholder="Start typing to see suggestions..."
+                  autocomplete="new-password"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  readonly
+                  required
+                />
+                <datalist id="mississauga-address-suggestions"></datalist>
+                <small class="helper-text">We currently service Mississauga only. Choose your full address from the suggestions so we can verify it.</small>
+              </label>
+              <label class="field">
+                <span>Unit number</span>
+                <input id="unit-number" name="unitNumber" type="text" placeholder="Unit, Apt, or Suite (optional)" autocomplete="address-line2" />
+              </label>
+              <label class="field">
+                <span>Phone number</span>
+                <div class="phone-input-wrap">
+                  <span class="phone-prefix" aria-hidden="true">🇨🇦 +1</span>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    inputmode="tel"
+                    placeholder="Type your phone number"
+                    autocomplete="tel-national"
+                    required
+                  />
+                </div>
+              </label>
+              <label class="field field-full">
+                <span>Email address</span>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  inputmode="email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </label>
+            </div>
+            <p class="helper-text" id="address-feedback" aria-live="polite"></p>
+            <p class="address-status" id="address-status">Address not verified yet</p>
+            <p class="address-status" id="phone-status">Phone number not verified yet</p>
+            <input id="city" name="city" type="hidden" value="Mississauga" />
+            <input id="province" name="province" type="hidden" value="ON" />
+            <input id="postal-code" name="postalCode" type="hidden" value="" />
+            <input id="country" name="country" type="hidden" value="CA" />
+            <input id="place-id" name="placeId" type="hidden" value="" />
+            <input id="street-number" name="streetNumber" type="hidden" value="" />
+            <input id="route" name="route" type="hidden" value="" />
+            <input id="appointment-date" name="appointmentDate" type="hidden" value="" />
+            <input id="appointment-time" name="appointmentTime" type="hidden" value="" />
+
+            <section class="calendar-card">
+              <div class="calendar-header">
+                <div>
+                  <p class="eyebrow">Appointment calendar</p>
+                  <h3>Select a date</h3>
+                </div>
+                <div class="calendar-controls">
+                  <button class="button button-secondary calendar-nav" type="button" id="prev-month">Previous</button>
+                  <button class="button button-secondary calendar-nav" type="button" id="next-month">Next</button>
+                </div>
+              </div>
+              <p class="calendar-month" id="calendar-month-label">Month</p>
+              <div class="calendar-weekdays" aria-hidden="true">
+                <span>Sun</span>
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+              </div>
+              <div class="calendar-grid" id="calendar-grid"></div>
+              <p class="helper-text" id="calendar-feedback">Choose a date to see available appointment times.</p>
+            </section>
+
+            <section class="timeslot-card">
+              <div>
+                <p class="eyebrow">Available times</p>
+                <h3>Pick a time</h3>
+              </div>
+              <div class="timeslot-grid" id="timeslot-grid"></div>
+            </section>
+
+            <div class="builder-actions">
+              <button class="button button-primary" type="submit" id="booking-button">Pay $50 Deposit And Book</button>
+              <p class="helper-text">
+                Your $50 deposit reserves this appointment. The remaining balance is due in person
+                after installation.
+              </p>
+            </div>
+          </form>
+
+          <aside class="summary-card">
+            <p class="card-label">Booking Summary</p>
+            <h3>Review your quote and appointment details</h3>
+            <p class="summary-intro">
+              Confirm your camera setup, appointment, and deposit before you continue to secure
+              payment.
+            </p>
+
+            <dl class="summary-list">
+              <div>
+                <dt>Total cameras</dt>
+                <dd id="summary-total-cameras">1</dd>
+              </div>
+              <div>
+                <dt>Indoor</dt>
+                <dd id="summary-indoor">1</dd>
+              </div>
+              <div>
+                <dt>Outdoor</dt>
+                <dd id="summary-outdoor">0</dd>
+              </div>
+              <div>
+                <dt>Doorbell</dt>
+                <dd id="summary-doorbell">0</dd>
+              </div>
+            </dl>
+
+            <div class="line-items">
+              <div>
+                <span>Estimated total</span>
+                <strong id="summary-total">$199</strong>
+              </div>
+              <div>
+                <span>Deposit due today</span>
+                <strong id="summary-deposit">$50</strong>
+              </div>
+              <div>
+                <span>Balance due after install</span>
+                <strong id="summary-balance">$149</strong>
+              </div>
+            </div>
+
+            <div class="booking-selection-box">
+              <p class="tracking-title">Selected appointment</p>
+              <p class="appointment-pill" id="selected-appointment-text">No appointment selected yet</p>
+            </div>
+
+            <div class="tracking-box">
+              <p class="tracking-title">Your booking details</p>
+              <ul class="feature-list compact">
+                <li><span id="tracking-package">Selected package: Custom Quote</span></li>
+                <li><span id="tracking-quote">Quote reference: pending</span></li>
+                <li><span id="tracking-source">Service area: Mississauga</span></li>
+                <li><span id="tracking-campaign">Deposit due today: $50</span></li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <script src="maps-config.js"></script>
+    <script src="booking.js"></script>
+  </body>
+</html>

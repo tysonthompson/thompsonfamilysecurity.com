@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: thompsonfamilysecurity
+    runtime: node
+    startCommand: node server.js
+    autoDeploy: true

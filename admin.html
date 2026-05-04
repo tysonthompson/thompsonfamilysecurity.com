@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Bookings | Thompson Family Security</title>
+    <meta name="theme-color" content="#102033" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero hero-compact">
+        <nav class="topbar">
+          <div class="brand-lockup">
+            <img class="brand-mark" src="/logo.png" alt="Thompson Family Security logo" />
+          </div>
+          <div class="topbar-actions">
+            <a class="button button-secondary desktop-cta" href="/">Back To Site</a>
+            <a class="button button-secondary desktop-cta" href="/admin/logout">Sign Out</a>
+          </div>
+        </nav>
+      </header>
+
+      <main class="builder-section booking-page">
+        <div class="section-heading">
+          <p class="section-kicker">Internal Admin</p>
+          <h2>See current bookings, deposit status, and quote details in one place.</h2>
+        </div>
+
+        <div class="admin-grid">
+          <section class="builder-card">
+            <div class="calendar-header">
+              <div>
+                <p class="eyebrow">Bookings calendar</p>
+                <h3 id="admin-calendar-month">Month</h3>
+              </div>
+              <div class="calendar-controls">
+                <button class="button button-secondary calendar-nav" type="button" id="admin-prev-month">Previous</button>
+                <button class="button button-secondary calendar-nav" type="button" id="admin-next-month">Next</button>
+              </div>
+            </div>
+
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>Sun</span>
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+            </div>
+            <div class="admin-calendar-grid" id="admin-calendar-grid"></div>
+          </section>
+
+          <aside class="summary-card">
+            <p class="card-label">Booking details</p>
+            <h3 id="admin-detail-title">Select a booking</h3>
+            <p class="summary-intro" id="admin-detail-intro">
+              Click a booking from the calendar or the daily list to review customer details,
+              camera counts, payment status, and quote totals.
+            </p>
+
+            <div class="booking-selection-box">
+              <p class="tracking-title">Selected appointment</p>
+              <p class="appointment-pill" id="admin-selected-appointment">No booking selected yet</p>
+            </div>
+
+            <div class="admin-booking-meta" id="admin-booking-meta"></div>
+            <div class="tracking-box" id="admin-booking-fields"></div>
+          </aside>
+        </div>
+
+        <section class="builder-card admin-list-card">
+          <div class="builder-header">
+            <div>
+              <p class="eyebrow">Daily bookings</p>
+              <h3 id="admin-list-date">Bookings for selected date</h3>
+            </div>
+          </div>
+          <div class="admin-bookings-list" id="admin-bookings-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="admin.js"></script>
+  </body>
+</html>

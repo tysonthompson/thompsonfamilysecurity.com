@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thompson Family Security | Security Camera Installation From $199</title>
+    <meta
+      name="description"
+      content="Security camera installation from $199. Build your exact system, see your quote, then continue to booking."
+    />
+    <meta name="theme-color" content="#102033" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <main>
+        <section class="brand-topmark" aria-label="Thompson Family Security">
+          <img class="brand-mark brand-mark-center" src="/logo.png" alt="Thompson Family Security logo" />
+        </section>
+
+        <section class="packages packages-first" id="packages">
+          <div class="section-heading">
+            <p class="section-kicker">Choose your package</p>
+            <h2>Security camera installation from $199.</h2>
+            <p class="hero-text packages-intro">
+              Pick a starting package below, or skip straight to a custom quote if you already know
+              the exact mix of cameras you want.
+            </p>
+          </div>
+
+          <div class="package-grid">
+            <article class="package-card">
+              <p class="package-tag">Starter</p>
+              <h3>1 Camera</h3>
+              <p class="price">$199</p>
+              <p>Best for front doors, apartments, and smaller spaces that need quick coverage.</p>
+              <ul class="feature-list">
+                <li>1 camera installed</li>
+                <li>Quick and affordable protection</li>
+                <li>Continue to booking after your quote</li>
+              </ul>
+              <a class="button button-primary button-block preset-button" href="#builder" data-package="Starter" data-indoor="1" data-outdoor="0" data-doorbell="0">Build Starter</a>
+            </article>
+
+            <article class="package-card featured">
+              <p class="package-tag">Home Essentials</p>
+              <h3>3 Cameras</h3>
+              <p class="price">$399</p>
+              <p>Balanced coverage for the front, back, and one key outdoor area.</p>
+              <ul class="feature-list">
+                <li>3 cameras installed</li>
+                <li>Strong everyday home coverage</li>
+                <li>Book a date and time on the next step</li>
+              </ul>
+              <a class="button button-primary button-block preset-button" href="#builder" data-package="Home Essentials" data-indoor="2" data-outdoor="1" data-doorbell="0">Build Home Essentials</a>
+            </article>
+
+            <article class="package-card">
+              <p class="package-tag">Whole Home</p>
+              <h3>4 Cameras</h3>
+              <p class="price">$499</p>
+              <p>Coverage for key entry points plus driveway, backyard, or side access.</p>
+              <ul class="feature-list">
+                <li>4 cameras installed</li>
+                <li>Designed for larger homes</li>
+                <li>Reserve your appointment with a deposit</li>
+              </ul>
+              <a class="button button-primary button-block preset-button" href="#builder" data-package="Whole Home" data-indoor="2" data-outdoor="2" data-doorbell="0">Build Whole Home</a>
+            </article>
+          </div>
+
+          <div class="cta-row packages-actions">
+            <a class="button button-primary" href="#builder">Build My Exact System</a>
+            <a class="button button-secondary" href="tel:+10000000000">Call for Questions</a>
+          </div>
+        </section>
+
+        <section class="builder-section" id="builder">
+          <div class="section-heading">
+            <p class="section-kicker">Step 1 of 2</p>
+            <h2>Build your quote.</h2>
+          </div>
+
+          <div class="builder-grid">
+            <form class="builder-card" id="quote-form">
+              <div class="builder-header">
+                <div>
+                  <p class="eyebrow">Quick quote</p>
+                  <h3>Choose your camera setup</h3>
+                </div>
+                <p class="helper-text" id="selected-package-label">Selected package: Custom Quote</p>
+              </div>
+
+              <div class="field-grid counts-grid">
+                <label class="field">
+                  <span>Indoor cameras</span>
+                  <input id="indoor-count" name="indoorCount" type="number" min="0" value="1" inputmode="numeric" />
+                </label>
+                <label class="field">
+                  <span>Outdoor cameras</span>
+                  <input id="outdoor-count" name="outdoorCount" type="number" min="0" value="0" inputmode="numeric" />
+                </label>
+                <label class="field">
+                  <span>Doorbell cameras</span>
+                  <input id="doorbell-count" name="doorbellCount" type="number" min="0" value="0" inputmode="numeric" />
+                </label>
+              </div>
+
+              <div class="field-grid checkbox-grid">
+                <label class="check-row">
+                  <input id="extended-support" name="extendedSupport" type="checkbox" />
+                  <span>Add extended support / warranty</span>
+                </label>
+                <label class="check-row">
+                  <input id="difficult-mounting" name="difficultMounting" type="checkbox" />
+                  <span>Add difficult mounting / custom wiring if needed</span>
+                </label>
+              </div>
+
+              <div class="builder-actions">
+                <button class="button button-primary" type="submit" id="quote-button">Continue</button>
+                <p class="helper-text">
+                  Next you’ll enter your address, choose an appointment date and time, and reserve
+                  your installation with a $50 deposit.
+                </p>
+              </div>
+            </form>
+
+            <aside class="summary-card">
+              <p class="card-label">Your Estimate</p>
+              <h3>Review your camera installation quote</h3>
+              <p class="summary-intro">
+                Your quote updates instantly as you adjust the number and type of cameras you want.
+              </p>
+
+              <dl class="summary-list">
+                <div>
+                  <dt>Total cameras</dt>
+                  <dd id="summary-total-cameras">1</dd>
+                </div>
+                <div>
+                  <dt>Indoor</dt>
+                  <dd id="summary-indoor">1</dd>
+                </div>
+                <div>
+                  <dt>Outdoor</dt>
+                  <dd id="summary-outdoor">0</dd>
+                </div>
+                <div>
+                  <dt>Doorbell</dt>
+                  <dd id="summary-doorbell">0</dd>
+                </div>
+              </dl>
+
+              <div class="line-items">
+                <div>
+                  <span>Base package</span>
+                  <strong id="summary-base">$199</strong>
+                </div>
+                <div>
+                  <span>Extra cameras</span>
+                  <strong id="summary-extra">$0</strong>
+                </div>
+                <div>
+                  <span>Outdoor upgrades</span>
+                  <strong id="summary-outdoor-upgrade">$0</strong>
+                </div>
+                <div>
+                  <span>Optional upgrades</span>
+                  <strong id="summary-builder-options">$0</strong>
+                </div>
+              </div>
+
+              <div class="total-row">
+                <span>Estimated total</span>
+                <strong id="summary-total">$199</strong>
+              </div>
+
+              <div class="line-items deposit-breakdown">
+                <div>
+                  <span>Deposit due at booking</span>
+                  <strong id="summary-deposit">$50</strong>
+                </div>
+                <div>
+                  <span>Balance due after install</span>
+                  <strong id="summary-balance">$149</strong>
+                </div>
+              </div>
+
+              <div class="summary-note">
+                Your $50 deposit is paid on the booking page after you choose your address and
+                appointment time.
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="process">
+          <div class="section-heading">
+            <p class="section-kicker">How it works</p>
+            <h2>Two simple steps to get booked.</h2>
+          </div>
+          <div class="steps">
+            <article>
+              <span>1</span>
+              <h3>Build your quote</h3>
+              <p>Choose your camera mix and optional upgrades to see your estimated total.</p>
+            </article>
+            <article>
+              <span>2</span>
+              <h3>Choose your appointment</h3>
+              <p>On the next page, enter your address, pick a date and time, and pay your deposit.</p>
+            </article>
+            <article>
+              <span>3</span>
+              <h3>Pay the balance after install</h3>
+              <p>Once the cameras are installed, pay the remaining balance in person.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div>
+          <p class="eyebrow">Ready to protect your property?</p>
+          <h2>Start your quote now and choose your appointment on the next step.</h2>
+        </div>
+        <div class="footer-actions">
+          <a class="button button-primary" href="#builder">Build My Exact System</a>
+          <a class="button button-secondary" href="tel:+10000000000">Call Thompson Family Security</a>
+        </div>
+      </footer>
+    </div>
+
+    <div class="sticky-cta">
+      <a class="button button-primary button-block" href="#builder">Start My Quote</a>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
