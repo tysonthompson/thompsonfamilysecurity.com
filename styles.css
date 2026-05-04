@@ -134,6 +134,17 @@ select {
   align-items: center;
 }
 
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.brand-link:focus-visible {
+  outline: 3px solid rgba(222, 107, 45, 0.35);
+  outline-offset: 4px;
+}
+
 .brand-mark {
   width: clamp(120px, 14vw, 180px);
   height: auto;
