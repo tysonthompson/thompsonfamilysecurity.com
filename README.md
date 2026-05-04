@@ -85,7 +85,7 @@ Recommended Google setup:
 
 - Enable the Maps JavaScript API and Places API in Google Cloud.
 - Restrict the browser API key by HTTP referrer before going live.
-- Keep the service area limited to Mississauga in the app logic, even with autocomplete enabled.
+- Keep the service area limited to Ottawa in the app logic, even with autocomplete enabled.
 
 ## Running locally
 

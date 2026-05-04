@@ -533,16 +533,16 @@ function getOptionalPrice(key) {
   return process.env[envKey] || null;
 }
 
-function isMississaugaAddress(address) {
+function isOttawaAddress(address) {
   const normalized = String(address || "").trim().toLowerCase();
   return (
-    normalized.includes("mississauga") ||
+    normalized.includes("ottawa") ||
     normalized.includes(", on") ||
     normalized.includes(" ontario")
   );
 }
 
-function isStructuredMississaugaAddress(payload) {
+function isStructuredOttawaAddress(payload) {
   const city = String(payload.city || "").trim().toLowerCase();
   const province = String(payload.province || "").trim().toLowerCase();
   const country = String(payload.country || "").trim().toLowerCase();
@@ -556,7 +556,7 @@ function isStructuredMississaugaAddress(payload) {
     Boolean(postalCode) &&
     Boolean(streetNumber) &&
     Boolean(route) &&
-    city === "mississauga" &&
+    city === "ottawa" &&
     (province === "on" || province === "ontario") &&
     (country === "ca" || country === "canada")
   );
@@ -868,8 +868,8 @@ async function createCheckoutSession(request, response) {
     return;
   }
 
-  if (!isStructuredMississaugaAddress(payload) && !isMississaugaAddress(payload.address)) {
-    sendJson(response, 400, { error: "We currently service Mississauga addresses only." });
+  if (!isStructuredOttawaAddress(payload) && !isOttawaAddress(payload.address)) {
+    sendJson(response, 400, { error: "We currently service Ottawa addresses only." });
     return;
   }
 

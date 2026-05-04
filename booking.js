@@ -1,49 +1,50 @@
 const BOOKING_STORAGE_KEY = "tfs_quote";
-const SERVICE_CITY = "Mississauga";
+const SERVICE_CITY = "Ottawa";
 const SERVICE_PROVINCE = "ON";
 const SERVICE_COUNTRY = "CA";
 const DISPLAY_CURRENCY = "CAD";
-const MISSISSAUGA_BOUNDS = {
-  north: 43.807,
-  south: 43.479,
-  west: -79.774,
-  east: -79.571,
+const OTTAWA_BOUNDS = {
+  north: 45.537,
+  south: 45.213,
+  west: -76.353,
+  east: -75.246,
 };
-const MISSISSAUGA_STREETS = [
-  "Hurontario St",
-  "Lakeshore Rd W",
-  "Lakeshore Rd E",
-  "Burnhamthorpe Rd W",
-  "Burnhamthorpe Rd E",
-  "Dundas St W",
-  "Dundas St E",
-  "Eglinton Ave W",
-  "Eglinton Ave E",
-  "Erin Mills Pkwy",
-  "Mavis Rd",
-  "Creditview Rd",
-  "Winston Churchill Blvd",
-  "Britannia Rd W",
-  "Britannia Rd E",
-  "Bristol Rd W",
-  "Bristol Rd E",
-  "Matheson Blvd W",
-  "Matheson Blvd E",
-  "Confederation Pkwy",
-  "Mississauga Valley Blvd",
-  "Cawthra Rd",
-  "Dixie Rd",
-  "Tomken Rd",
-  "Airport Rd",
-  "Rathburn Rd W",
-  "Rathburn Rd E",
-  "Queensway W",
-  "Central Pkwy W",
-  "Central Pkwy E",
-  "Meadowvale Blvd",
-  "Argentia Rd",
-  "Thomas St",
-  "Ninth Line",
+const OTTAWA_STREETS = [
+  "Bank St",
+  "Rideau St",
+  "Elgin St",
+  "Wellington St",
+  "Somerset St W",
+  "Somerset St E",
+  "Baseline Rd",
+  "Carling Ave",
+  "Merivale Rd",
+  "Bronson Ave",
+  "Montreal Rd",
+  "St Laurent Blvd",
+  "Innes Rd",
+  "Ogilvie Rd",
+  "Heron Rd",
+  "Walkley Rd",
+  "Hunt Club Rd",
+  "Riverside Dr",
+  "Prince of Wales Dr",
+  "Fisher Ave",
+  "Greenbank Rd",
+  "Woodroffe Ave",
+  "Meadowlands Dr",
+  "Robertson Rd",
+  "Hazeldean Rd",
+  "Strandherd Dr",
+  "Eagleson Rd",
+  "Tenth Line Rd",
+  "Trim Rd",
+  "Jeanne d'Arc Blvd",
+  "Orleans Blvd",
+  "Kanata Ave",
+  "March Rd",
+  "Queen Mary St",
+  "Clyde Ave",
 ];
 const TIMESLOTS = ["9:00 AM", "11:00 AM", "1:00 PM", "3:00 PM", "5:00 PM"];
 
@@ -58,7 +59,7 @@ const emailInput = document.querySelector("#email");
 const phoneStatus = document.querySelector("#phone-status");
 const installSpeedInput = document.querySelector("#install-speed");
 const addressFeedback = document.querySelector("#address-feedback");
-const addressSuggestions = document.querySelector("#mississauga-address-suggestions");
+const addressSuggestions = document.querySelector("#ottawa-address-suggestions");
 const cityInput = document.querySelector("#city");
 const provinceInput = document.querySelector("#province");
 const postalCodeInput = document.querySelector("#postal-code");
@@ -222,7 +223,7 @@ function getAddressValidation(addressValue) {
   if (!normalizedAddress) {
     return {
       valid: false,
-      message: "Enter your Mississauga service address to continue.",
+      message: `Enter your ${SERVICE_CITY} service address to continue.`,
     };
   }
 
@@ -244,7 +245,7 @@ function getAddressValidation(addressValue) {
 function updateAddressFeedback(validation) {
   addressFeedback.textContent = validation.message;
   addressFeedback.style.color = validation.valid ? "var(--accent)" : "var(--primary-deep)";
-  addressStatus.textContent = validation.valid ? "Verified Mississauga service address" : "Address not verified yet";
+  addressStatus.textContent = validation.valid ? `Verified ${SERVICE_CITY} service address` : "Address not verified yet";
   addressStatus.classList.toggle("is-verified", validation.valid);
 }
 
@@ -263,7 +264,7 @@ function buildFallbackAddressSuggestions(rawValue) {
   const houseNumber = houseNumberMatch ? houseNumberMatch[1] : "";
   const streetFragment = (houseNumberMatch ? houseNumberMatch[2] : trimmedValue).toLowerCase();
 
-  return MISSISSAUGA_STREETS.filter((street) => street.toLowerCase().includes(streetFragment))
+  return OTTAWA_STREETS.filter((street) => street.toLowerCase().includes(streetFragment))
     .slice(0, 8)
     .map((street) =>
       houseNumber ? `${houseNumber} ${street}, ${SERVICE_CITY}, ON` : `${street}, ${SERVICE_CITY}, ON`
@@ -384,8 +385,8 @@ function initializeGoogleAutocomplete() {
     fields: ["address_components", "formatted_address", "geometry", "place_id"],
     types: ["address"],
     bounds: new window.google.maps.LatLngBounds(
-      { lat: MISSISSAUGA_BOUNDS.south, lng: MISSISSAUGA_BOUNDS.west },
-      { lat: MISSISSAUGA_BOUNDS.north, lng: MISSISSAUGA_BOUNDS.east }
+      { lat: OTTAWA_BOUNDS.south, lng: OTTAWA_BOUNDS.west },
+      { lat: OTTAWA_BOUNDS.north, lng: OTTAWA_BOUNDS.east }
     ),
     strictBounds: false,
   });
@@ -405,11 +406,11 @@ function initializeGoogleAutocomplete() {
 
 function handleGoogleMapsFailure(reason) {
   googleAutocomplete = null;
-  addressInput.setAttribute("list", "mississauga-address-suggestions");
+  addressInput.setAttribute("list", "ottawa-address-suggestions");
   updateAddressFeedback({
     valid: false,
     message:
-      "Google address autocomplete is not available right now, so local Mississauga suggestions are being used instead.",
+      "Google address autocomplete is not available right now, so local Ottawa suggestions are being used instead.",
   });
 
   if (reason) {
